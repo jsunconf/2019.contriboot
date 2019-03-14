@@ -1,21 +1,27 @@
-import preact, {Component} from 'preact';
-
 import marked from 'marked';
 import toMarkdown from 'to-markdown';
 import Editor from 'react-medium-editor';
+import React from 'react';
+import { ContribootEntry, ContribootEntryType } from './types';
 
-const initialState = {
+type AddEntriesFormState = ContribootEntry;
+
+type OwnProps = {
+  onEntryAdd: (entry: ContribootEntry) => void;
+};
+
+const initialState: AddEntriesFormState = {
   type: 'contributions',
   title: '',
   description: ''
 }
 
-export default class extends Component {
+export default class AddEntriesForm extends React.Component<OwnProps, AddEntriesFormState> {
   /**
    * The constructor. Calls the super constructor.
    * @param  {Object} props The properties object.
    */
-  constructor(props) {
+  constructor(props: OwnProps) {
     super(props);
     this.state = initialState;
   }
@@ -24,7 +30,7 @@ export default class extends Component {
    * Updates firebase with the new state after the submit button was clicked.
    * @param  {Event} event The submit event.
    */
-  onSubmit(event) {
+  onSubmit(event: Event) {
     event.preventDefault();
 
     this.props.onEntryAdd({
@@ -40,7 +46,7 @@ export default class extends Component {
    * Returns the component.
    * @return {React.Element}
    */
-  render() {
+  render(): JSX.Element {
     const submitText = 'Add ' +
       (this.state.type === 'contributions' ? 'Contribution' : 'Interest');
 
@@ -55,7 +61,7 @@ export default class extends Component {
 
           <fieldset className="submit-form__type-selection">
             <input type='radio'
-              onChange={event => this.setState({type: event.target.value})}
+              onChange={event => this.setState({type: event.target.value as ContribootEntryType})}
               id='type--contributions'
               name='type'
               className=''
@@ -64,7 +70,7 @@ export default class extends Component {
             <label className='button button--small' htmlFor='type--contributions'>Contribution</label>
 
             <input type='radio'
-              onChange={event => this.setState({type: event.target.value})}
+              onChange={event => this.setState({type: event.target.value as ContribootEntryType})}
               id='type--interests'
               name='type'
               className=''
@@ -95,7 +101,7 @@ export default class extends Component {
             id='description'
             name='description'
             text={marked(this.state.description)}
-            onChange={html => this.setState({description: toMarkdown(html)})}
+            onChange={(html: string) => this.setState({description: toMarkdown(html)})}
             options={{
               paste: {
                 cleanPastedHTML: true
