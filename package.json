@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Contributions & Interests",
   "scripts": {
-    "start": "concurrently 'npm run watch' 'http-server -o'",
+    "start": "concurrently 'npm run watch' 'http-server ./build/ -o'",
     "watch": "npm run clean && concurrently 'npm run watch:css' 'npm run watch:js'",
     "watch:js": "watchify -v  -t aliasify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] assets/scripts/main.jsx -o static/main.js ",
     "watch:css": "stylus --inline --watch --sourcemap-inline -u autoprefixer-stylus assets/styles/main.styl -o static",
@@ -12,8 +12,8 @@
     "clean:images": "rm -rf static/images && mkdir static/images",
     "lint": "eslint ./assets/scripts",
     "copy:dist": "rm -rf build && mkdir -p build && cp index.html build && cp -r static build",
-    "build": "npm run clean && npm run build:css && npm run build:js && npm run copy:dist",
-    "build:js": "browserify assets/scripts/main.jsx -t aliasify -t [  babelify --presets [ @babel/preset-env @babel/preset-react ] ] | uglifyjs > static/main.js",
+    "build": "npm run clean && npm run build:css && npm run copy:dist && webpack",
+    "build:js": "tsc --project .",
     "build:css": "stylus --inline --compress -u autoprefixer-stylus assets/styles/main.styl -o static",
     "build:images": "npm run clean:images && cp -r assets/images/* static/images/"
   },
@@ -23,6 +23,11 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
+    "@types/marked": "^0.6.3",
+    "@types/node": "8.9.4",
+    "@types/react": "^16.8.8",
+    "@types/react-dom": "^16.8.2",
+    "@types/to-markdown": "^3.0.0",
     "aliasify": "^2.1.0",
     "autoprefixer-stylus": "^0.14.0",
     "babelify": "^10.0.0",
@@ -31,8 +36,6 @@
     "firebase": "^5.7.3",
     "http-server": "^0.11.1",
     "marked": "^0.6.0",
-    "preact": "^8.4.2",
-    "preact-compat": "^3.18.4",
     "react-markdown": "^4.0.6",
     "react-medium-editor": "^1.8.1",
     "react-spinner": "^0.2.7",
@@ -40,13 +43,25 @@
     "stylus": "^0.54.5",
     "stylus-normalize": "^3.0.3",
     "to-markdown": "^3.1.1",
+    "ts-loader": "^5.3.3",
     "watch-run": "^1.2.5",
-    "watchify": "^3.11.0"
+    "watchify": "^3.11.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   },
   "aliasify": {
     "aliases": {
       "react": "preact-compat",
       "react-dom": "preact-compat"
     }
+  },
+  "dependencies": {
+    "react": "16",
+    "react-dom": "^16.8.4",
+    "typescript": "^3.3.3333"
+  },
+  "X-removed-dependencies": {
+    "preact": "^8.4.2",
+    "preact-compat": "^3.18.4"
   }
 }

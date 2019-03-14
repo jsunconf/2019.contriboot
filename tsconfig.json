@@ -1,0 +1,30 @@
+{
+	"compilerOptions": {
+		"importHelpers": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"jsx": "react",
+		"moduleResolution": "node",
+		"newLine": "LF",
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"removeComments": false,
+		"sourceMap": true,
+		"target": "es5",
+		// "module": "esnext",
+		"module": "es2015",
+		"lib": ["es2016", "dom", "es5"],
+		"pretty": true,
+		"rootDir": "./assets/scripts",
+		"baseUrl": "./assets/scripts",
+		"paths": { "*": ["node_modules/@types/*", "*"] },
+		// "lib": ["dom", "es5", "es6"],
+        "keyofStringsOnly": true,
+        "outDir": "./static"
+	},
+	"include": [
+		"./assets/scripts/*.ts*",
+		"@types/*"
+	]
+}
