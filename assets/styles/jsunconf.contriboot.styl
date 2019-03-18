@@ -92,6 +92,8 @@ textarea,
   & a
     & h3
       color: white
+    &:hover,&:focus
+      background-color: rgba(0, 0, 0, 0)
 
   &:hover, &:focus, &--active
     border-color: rgba(0,0,0,0.14)
@@ -133,6 +135,13 @@ textarea,
         border: none
         font-size: 26px
         cursor: pointer
+
+      &__button[disabled]
+        color: white
+        cursor: default
+
+      &__button:hover
+        color: white
 
   &__description
     padding: 10px 75px 10px 10px
