@@ -21,9 +21,3 @@ export interface ContribootVote {
     '.value': string;
     '.key': string;
 }
-
-export interface GitHubUserProfile {
-    uid: string;
-    displayName: string;
-    photoURL: string;
-}
