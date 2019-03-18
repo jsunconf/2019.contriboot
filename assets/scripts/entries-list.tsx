@@ -13,75 +13,93 @@ interface OwnProps {
   votes: any[];
   type: ContribootEntryType;
 }
-
-interface EntriesListState {
-
-}
 /**
  * Renders a list of entries
  */
-export default class EntriesList extends React.Component<OwnProps, EntriesListState> {
-  handleVote(key: string, votes: number) {
-    const ref = firebase.database().ref(`${VOTES_DB}/${key}`);
-    ref.set(votes + 1);
+export default class EntriesList extends React.Component<OwnProps> {
+  private handleVote(key: string, votes: number, event: React.MouseEvent<HTMLButtonElement>) {
     localStorage.setItem(key, 'true');
+    firebase.database().ref(VOTES_DB).child(key).set(votes + 1).then(() => {
+      // everything went well :)
+    }).catch((error) => {
+      localStorage.removeItem(key);
+    });
+  }
+
+  private renderVoting(key: string, votes: number, enabled: boolean): JSX.Element {
+    const disabledStar: JSX.Element = (<button
+      type='button'
+      className='entry__header__votes__button'
+      disabled>
+        &#9733;
+      </button>
+    );
+    const enabledStar: JSX.Element = (<button
+      type='button'
+      className='entry__header__votes__button'
+      onClick={(event) => this.handleVote(key, votes, event)}>
+        &#9734;
+      </button>
+    );
+
+    return (
+      <span className='entry__header__votes'>
+        {enabled ? disabledStar : enabledStar }
+        {votes}
+      </span>
+    );
+  }
+
+  // private renderEntry(entry: ContribootEntry, allVotes?: ContribootVote[], currentEntryKey?: string): JSX.Element {
+  private renderEntry(entry: ContribootEntry): JSX.Element {
+    const { votes: allVotes, currentEntryKey } = this.props;
+    const { '.key': key, title, user, description } = entry;
+
+    const isActive = currentEntryKey === key;
+    const entryLink = isActive ? '#none' : `#${key}`;
+    const classes = 'entry' + (isActive ? ' entry--active' : '');
+
+    const votesObj: ContribootVote | undefined = allVotes.find((vote: ContribootVote) => {
+        return vote['.key'] === key;
+      });
+    const votes = +(votesObj && votesObj['.value'] || 0);
+    const voted = Boolean(votesObj && localStorage.getItem(votesObj['.key']));
+
+    return (
+      <li data-key={key} key={key} className={classes}>
+        <div className='entry__header'>
+          <a
+            href={entryLink}
+            title={title}
+            className='entry__header__title'>
+            <h3>
+              {title}
+              <small className='entry__header__author'>
+                by {user.username}
+              </small>
+            </h3>
+          </a>
+
+          {this.renderVoting(key, votes, voted)}
+        
+        </div>
+        
+        <div className='entry__description'>
+          <ReactMarkdown source={description} />
+        </div>
+      </li>
+    );
   }
 
   /**
    * Render the entries
    * @return {JSX} The list
    */
-  renderEntries() {
+  private renderEntries() {
+    const { entries } = this.props;
     return (
       <ul>
-        {
-          this.props.entries.map((entry: ContribootEntry, index: number) => {
-            const key = entry['.key'];
-            const isActive = this.props.currentEntryKey === key;
-            const classes = 'entry' + (isActive ? ' entry--active' : '');
-            const votesObj = this.props.votes.find((vote: ContribootVote) => {
-                return vote['.key'] === entry['.key'];
-              });
-            const votes = votesObj && votesObj['.value'] || 0;
-            const voted = votesObj && localStorage.getItem(votesObj['.key']);
-
-            return (
-              <li data-key={key} key={key} className={classes}>
-                <div className='entry__header'>
-                  <a href={isActive ? '#none' : `#${key}`}
-                      title={entry.title}
-                      className='entry__header__title'>
-                    <h3>
-                      {entry.title}
-                      <small className='entry__header__author'>
-                        by {entry.user.username}
-                      </small>
-                    </h3>
-                  </a>
-
-                  <span className='entry__header__votes'>
-                    {voted ?
-                      <button type='button'
-                        className='entry__header__votes__button' disabled>
-                          &#9733;
-                      </button> :
-                      <button type='button'
-                        className='entry__header__votes__button'
-                        onClick={() => this.handleVote(entry['.key'], votes)}>
-                          &#9734;
-                      </button>
-                    }
-                    {votes}
-                  </span>
-                </div>
-                
-                <div className='entry__description'>
-                  <ReactMarkdown source={entry.description} />
-                </div>
-              </li>
-            );
-          })
-        }
+        {entries.map((entry) => this.renderEntry(entry))}
       </ul>
     );
   }
@@ -90,15 +108,15 @@ export default class EntriesList extends React.Component<OwnProps, EntriesListSt
    * Render the component
    * @return {JSX} The list
    */
-  render() {
+  public render() {
+    const { entries, title } = this.props;
+    const hasEntries = entries && entries.length;
+
     return (
       <div className='entries'>
-        <h2>{this.props.title}</h2>
+        <h2>{title}</h2>
 
-        {this.props.entries.length ?
-          this.renderEntries() :
-          <Spinner />
-        }
+        {hasEntries ? this.renderEntries() : <Spinner />}
       </div>
     );
   }
