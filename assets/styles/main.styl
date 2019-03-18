@@ -89,6 +89,10 @@ textarea,
   position: relative
   transition: all .3s ease-in-out
 
+  & a
+    & h3
+      color: white
+
   &:hover, &:focus, &--active
     border-color: rgba(0,0,0,0.14)
     background: rgba(0,0,0,0.07)
@@ -106,9 +110,11 @@ textarea,
       width: 100%
       border: none
       padding: 10px
-      h3
-        font-size: 1.75em
-        margin: 0
+      a
+        h3
+          font-size: 1.75em
+          margin: 0
+          color: white !important
       small
         font-size: .5em
         margin-left: 1em
