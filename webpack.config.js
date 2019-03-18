@@ -1,21 +1,23 @@
 const path = require('path');
 
 module.exports = {
-    entry: './assets/scripts/main.tsx',
-    module: {
-      rules: [
-        {
-          test: /\.tsx?$/,
-          use: 'ts-loader',
-          exclude: /node_modules/
-        }
-      ]
-    },
-    resolve: {
-      extensions: [ '.tsx', '.ts', '.js' ]
-    },
-    output: {
-      filename: 'jsunconf.contriboot.js',
-      path: path.resolve(__dirname, 'build', 'static')
-    }
-  };
+  entry: './assets/scripts/main.tsx',
+  mode: "development",
+  devtool: "inline-source-map",
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
+  },
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ]
+  },
+  output: {
+    filename: 'jsunconf.contriboot.js',
+    path: path.resolve(__dirname, 'build', 'static')
+  }
+};
