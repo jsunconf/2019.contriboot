@@ -7,13 +7,16 @@ import Login from './login';
 import Logout from './logout';
 import EntriesList from './entries-list';
 import AddEntriesForm from './add-entries-form';
-import { ContribootEntry, ContribootUser, GitHubUserProfile } from './types';
+import { ContribootEntry, ContribootUser, ContribootVote } from './types';
+import { isObject } from 'util';
+
+type DataSnapshot = firebase.database.DataSnapshot;
 
 interface AppState {
   readonly shallScroll: boolean;
   readonly contributions: ContribootEntry[];
-  readonly interests: any[];
-  readonly votes: any[];
+  readonly interests: ContribootEntry[];
+  readonly votes: ContribootVote[];
   readonly user: null | ContribootUser;
   readonly currentEntryKey: null | string; 
   readonly isSignedIn: boolean;
@@ -42,54 +45,78 @@ class App extends React.Component<{}, AppState> {
       currentEntryKey: null,
       isSignedIn: false
     };
+
+    this.checkHash = this.checkHash.bind(this);
+    this.setupFirebaseListeners = this.setupFirebaseListeners.bind(this);
+    this.handleEntryAdd = this.handleEntryAdd.bind(this);
+    this.doSetAuthenticatedUser = this.doSetAuthenticatedUser.bind(this);
+
+    this.setupFirebaseListeners();
+  }
+
+  doSetAuthenticatedUser(firebaseUser: firebase.User) {
+    const user = this.getUserData(firebaseUser);
+    if (user) {
+      this.setState({ user, isSignedIn: true })
+    }
+  }
+
+  setupFirebaseListeners() {
+    const getEntries = (snap: DataSnapshot): ContribootEntry[] => {
+      const items: ContribootEntry[] = [];
+      snap.forEach((itemSnap: DataSnapshot) => {
+        const value = itemSnap.val();
+        const item = { '.key': itemSnap.key };
+        if (isObject(value)) {
+          items.push({
+            ...item,
+            ...itemSnap.val()
+          } );
+        }
+      });
+      return items;
+    };
+
+    const getVotes = (snap: DataSnapshot): ContribootVote[] => {
+      const items: ContribootVote[] = [];
+      snap.forEach((itemSnap: DataSnapshot) => {
+        const value = itemSnap.val();
+        const item = { '.key': itemSnap.key };
+        items.push({
+          ...item,
+          '.value': value
+        });
+      });
+      return items;
+    };
+
+    this.firebaseCallbacks.contributions = firebase.database().ref(CONTRIBUTIONS_DB).on('value', (snap: DataSnapshot) => {
+      this.setState({ contributions: getEntries(snap) });
+    });
+
+    this.firebaseCallbacks.interests = firebase.database().ref(INTERESTS_DB).on('value', (snap: DataSnapshot) => {    
+      this.setState({ interests: getEntries(snap) });
+    });
+
+    this.firebaseCallbacks.votes = firebase.database().ref(VOTES_DB).on('value', (snap: DataSnapshot) => {    
+      this.setState({ votes: getVotes(snap) });
+    });
   }
 
   componentDidMount() {
     window.addEventListener('hashchange', this.checkHash, false);
 
-    firebase.database().ref(CONTRIBUTIONS_DB).off('value', this.firebaseCallbacks.contributions);
-    firebase.database().ref(INTERESTS_DB).off('value', this.firebaseCallbacks.interests);
-    firebase.database().ref(VOTES_DB).off('value', this.firebaseCallbacks.votes);
-
     this.checkHash();
   }
 
   componentWillMount() {
-    var self = this;
-    firebase.auth().getRedirectResult().then(function (result) {
-      // The signed-in user info.
-      self.setState({ user: self.getUserData(result.user) });
-    }).catch(function (error) {
-      console.log('ERROR', error);
-    });
-
-    this.firebaseCallbacks.contributions = firebase.database().ref(CONTRIBUTIONS_DB).on('value', function(snap) {    
-      var items: any[] = [];
-      snap.forEach(function(itemSnap) {
-        items.push(itemSnap.val());
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then((result) => this.doSetAuthenticatedUser(result.user))
+      .catch(function (error) {
+        console.log('ERROR', error);
       });
-      this.setState({ contributions: items });
-    });
-
-    this.firebaseCallbacks.interests = firebase.database().ref(INTERESTS_DB).on('value', function(snap) {    
-      var items: any[] = [];
-      snap.forEach(function(itemSnap) {
-        items.push(itemSnap.val());
-      });
-      this.setState({ interests: items });
-    });
-
-    this.firebaseCallbacks.votes = firebase.database().ref(VOTES_DB).on('value', function(snap) {    
-      var items: any[] = [];
-      snap.forEach(function(itemSnap) {
-        items.push(itemSnap.val());
-      });
-      this.setState({ votes: items });
-    });
-
-    // this.bindAsArray(firebase.database().ref(CONTRIBUTIONS_DB), 'contributions');
-    // this.bindAsArray(firebase.database().ref(INTERESTS_DB), 'interests');
-    // this.bindAsArray(firebase.database().ref(VOTES_DB), 'votes');
   }
 
   componentDidUpdate() {
@@ -120,6 +147,10 @@ class App extends React.Component<{}, AppState> {
    */
   componentWillUnmount() {
     window.removeEventListener('hashchange', this.checkHash, false);
+
+    firebase.database().ref(CONTRIBUTIONS_DB).off('value', this.firebaseCallbacks.contributions);
+    firebase.database().ref(INTERESTS_DB).off('value', this.firebaseCallbacks.interests);
+    firebase.database().ref(VOTES_DB).off('value', this.firebaseCallbacks.votes);
   }
 
   /**
@@ -136,7 +167,7 @@ class App extends React.Component<{}, AppState> {
    * @param {Object} user The raw user data
    * @return {Object} The users data
    */
-  getUserData(user: GitHubUserProfile): ContribootUser | null {
+  getUserData(user: firebase.User): ContribootUser | null {
     if (!user) {
       return null;
     }
@@ -154,20 +185,17 @@ class App extends React.Component<{}, AppState> {
    * @param  {Object} newEntry The new entry
    */
   handleEntryAdd(newEntry: ContribootEntry) {
-
     const typeRef = firebase.database().ref(newEntry.type);
     const votesRef = firebase.database().ref(VOTES_DB);
 
-    const newEntryRef = typeRef.push({
+    typeRef.push({
       title: newEntry.title,
       description: newEntry.description,
       user: this.state.user
-    });
-
-    newEntryRef.then(result => {
+    }).then(result => {
       const newKey = result.key;
       votesRef.child(newKey).set(1);
-      //  location.hash = newKey;
+      window.location.hash = newKey;
     })
 
     this.setState({ shallScroll: true });
@@ -201,17 +229,22 @@ class App extends React.Component<{}, AppState> {
    */
   render() {
     const isLoggedin = this.state.user !== null;
+    const logoutForm = () => (<Logout user={this.state.user} logout={this.logout} />);
+    const addEntryForm = () => (<AddEntriesForm onEntryAdd={this.handleEntryAdd} />);
+    const loginForm = () => (<Login loginWithGithub={this.loginWithGithub} />);
 
     return (
       <div className='contriboot'>
         <section className='entries-container'>
           <EntriesList
+            key='contributions'
             title='Contributions'
             type='contributions'
             currentEntryKey={this.state.currentEntryKey}
             entries={this.state.contributions}
             votes={this.state.votes} />
           <EntriesList
+            key='interests'
             title='Interests'
             type='interests'
             currentEntryKey={this.state.currentEntryKey}
@@ -221,15 +254,14 @@ class App extends React.Component<{}, AppState> {
 
         <h2>Add contrib or interest</h2>
 
-        {isLoggedin ?
-          [<Logout user={this.state.user} logout={this.logout} />,
-          <AddEntriesForm onEntryAdd={this.handleEntryAdd} />] :
-          <Login loginWithGithub={this.loginWithGithub} />
+        {
+          isLoggedin
+          ? [logoutForm(), addEntryForm()]
+          : loginForm()
         }
 
       </div>
     );
-
   }
 }
 
