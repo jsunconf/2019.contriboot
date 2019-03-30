@@ -12,6 +12,11 @@ section
   padding-right: 20vw
   padding-bottom: 12vh
   padding-left: 20vw
+  text-align: center
+
+  @media (max-width: 50em)
+    padding-right: 0;
+    padding-left: 0;
 
 .navigation__home__image
   max-height: 8em
@@ -50,7 +55,10 @@ h1
 h2
   font-size: 3.5rem
 
-
+p
+  font-size: 1.33rem
+  line-height: 2.25rem
+  margin: 0 0 5vh 0
 
 button
   color: white
@@ -139,11 +147,7 @@ textarea,
   ul
     list-style-type: none
     padding-left: 0
-
-  // @media (min-width: 50em)
-  //   width: 50%
-  //   margin: 2em
-
+    text-align: left
 
 .entry
   margin-bottom: 10px
@@ -192,9 +196,10 @@ textarea,
           font-size: 1.75em
           margin: 0
           color: white !important
-      small
-        font-size: .5em
-        margin-left: 1em
+
+    &__author
+      font-size: .7em
+      margin-left: 1em
 
     &__votes
       display: flex
