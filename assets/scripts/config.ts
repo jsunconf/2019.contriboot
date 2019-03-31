@@ -12,7 +12,7 @@ var config = {
   };
 firebase.initializeApp(config);
 
-export const CONTRIBUTIONS_DB = 'contributions';
+export const PROPOSALS_DB = 'contributions';
 export const INTERESTS_DB= 'interests';
 export const VOTES_DB = 'votes';
 
