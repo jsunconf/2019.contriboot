@@ -235,7 +235,7 @@ class App extends React.Component<{}, AppState> {
 
     return (
       <div className='contriboot'>
-        <section className='entries-container'>
+        <div className='entries-container'>
           <EntriesList
             key='contributions'
             title='Contributions'
@@ -250,7 +250,7 @@ class App extends React.Component<{}, AppState> {
             currentEntryKey={this.state.currentEntryKey}
             entries={this.state.interests}
             votes={this.state.votes} />
-        </section>
+        </div>
 
         <h2>Add contrib or interest</h2>
 

@@ -1,9 +1,22 @@
-@import 'main-site'
+// @import 'main-site'
 
 body
   scroll-behavior: smooth
-  background-color: #8f237f;
-  color: #fff;
+  background-color: #fff;
+  color: #8f237f;
+  font-size: 1em
+  font-family: 'Source Code Pro__subset', 'Source Code Pro', 'Courier New', Courier, monospace, "Neue Helvetica", Helvetica, Arial, sans-serif;
+
+section
+  padding-top: 6vh
+  padding-right: 20vw
+  padding-bottom: 12vh
+  padding-left: 20vw
+  text-align: center
+
+  @media (max-width: 50em)
+    padding-right: 0;
+    padding-left: 0;
 
 .navigation__home__image
   max-height: 8em
@@ -28,6 +41,39 @@ textarea,
   width: 100%
   border: none
 
+h1, h2
+  font-family: 'Gochi Hand__subset', 'Gochi Hand', cursive
+  color: #8f237f
+  font-weight: 600
+  margin: 1em 0 0.75em 0
+  line-height: 1.2
+  padding: 0
+
+h1
+  font-size: 4.5rem
+
+h2
+  font-size: 3.5rem
+
+p
+  font-size: 1.33rem
+  line-height: 2.25rem
+  margin: 0 0 5vh 0
+
+button
+  color: white
+  font-weight: 600
+  padding: 15px
+  font-size: 1em
+  font-family: 'Source Code Pro__subset', 'Source Code Pro', 'Courier New', Courier, monospace, "Neue Helvetica", Helvetica, Arial, sans-serif
+
+  &.button
+    background-color: #8f237f
+
+  &.button:hover
+    background-color: #46003c
+    cursor: pointer
+
 textarea,
 .textarea
   min-height: 6em
@@ -39,26 +85,46 @@ textarea,
   padding: 15px
   max-width: 500px
   margin: 1em auto
-  background: rgba(black, .25)
+
+  button
+    &:disabled,
+    &:disabled:hover
+      background-color: grey;
+      cursor: default
+
   &__header
     h3, fieldset
       display: inline-block
     h3
       margin-right: .4em
 
+  & input[type="text"]
+    border-bottom: 2px solid #8f237f
+    margin-bottom: 2rem
+
   & input[type="radio"]
     display:none
 
   & input[type="radio"] + label
     padding:4px 11px
-    font-family:Arial
+    // font-family:Arial
     font-size:16px
     cursor: pointer
     margin-right: 10px
-    padding-bottom: 0
+    padding: 4px 11px;
+
+  & input[type="radio"]:checked + label:hover,
+  & input[type="radio"] + label:hover
+    background-color: #46003c
+    color: white
 
   & input[type="radio"]:checked + label
-    box-shadow: 3px 3px 0px #004b9f
+    // box-shadow: 3px 3px 0px #004b9f
+    background-color: #8f237f
+    color: white
+
+  .textarea
+    border-bottom: 2px solid #8f237f
 
 .entries-container
   display: flex
@@ -73,35 +139,48 @@ textarea,
 
 .entries
   width: 100%
-  max-width: 50em
+  // max-width: 50em
   margin: 0
   flex-grow: 1
   flex-shrink: 1
 
-  @media (min-width: 50em)
-    width: 50%
-    margin: 2em
-
+  ul
+    list-style-type: none
+    padding-left: 0
+    text-align: left
 
 .entry
   margin-bottom: 10px
-  border: 4px solid transparent
+  border: 2px solid transparent
   position: relative
   transition: all .3s ease-in-out
 
   & a
+    text-decoration: none
     & h3
-      color: white
+      color: #8f237f
     &:hover,&:focus
       background-color: rgba(0, 0, 0, 0)
 
   &:hover, &:focus, &--active
-    border-color: rgba(0,0,0,0.14)
-    background: rgba(0,0,0,0.07)
+    border-color: #8f237f
+    background: #46003c
+    color: white
+    a
+      h3
+        color: white
+
   &--active
-    border-color: #0069b4
+    border-color: #8f237f
+    background-color: white
+    color: #8f237f
+
+    a
+      h3
+        color: #8f237f
+
     &:hover, &:focus
-      border-color: #0069b4
+      border-color: #46003c
 
   &__header
     display: flex
@@ -117,9 +196,10 @@ textarea,
           font-size: 1.75em
           margin: 0
           color: white !important
-      small
-        font-size: .5em
-        margin-left: 1em
+
+    &__author
+      font-size: .7em
+      margin-left: 1em
 
     &__votes
       display: flex
@@ -130,14 +210,14 @@ textarea,
 
       &__button
         margin-right: 5px
-        color: #0069b4
+        color: #8f237f
         background: none
         border: none
         font-size: 26px
         cursor: pointer
 
       &__button[disabled]
-        color: white
+        color: #8f237f
         cursor: default
 
       &__button:hover
