@@ -18,7 +18,7 @@ interface AppState {
   readonly interests: ContribootEntry[];
   readonly votes: ContribootVote[];
   readonly user: null | ContribootUser;
-  readonly currentEntryKey: null | string; 
+  readonly currentEntryKey: null | string;
   readonly isSignedIn: boolean;
 }
 
@@ -94,11 +94,11 @@ class App extends React.Component<{}, AppState> {
       this.setState({ contributions: getEntries(snap) });
     });
 
-    this.firebaseCallbacks.interests = firebase.database().ref(INTERESTS_DB).on('value', (snap: DataSnapshot) => {    
+    this.firebaseCallbacks.interests = firebase.database().ref(INTERESTS_DB).on('value', (snap: DataSnapshot) => {
       this.setState({ interests: getEntries(snap) });
     });
 
-    this.firebaseCallbacks.votes = firebase.database().ref(VOTES_DB).on('value', (snap: DataSnapshot) => {    
+    this.firebaseCallbacks.votes = firebase.database().ref(VOTES_DB).on('value', (snap: DataSnapshot) => {
       this.setState({ votes: getVotes(snap) });
     });
   }
@@ -126,7 +126,7 @@ class App extends React.Component<{}, AppState> {
       currentEntryKey,
       shallScroll
     } = this.state;
-      
+
     const entriesCount = document.querySelectorAll('.entry').length;
     const didRender = contributions.length + interests.length === entriesCount;
 
@@ -238,7 +238,7 @@ class App extends React.Component<{}, AppState> {
         <div className='entries-container'>
           <EntriesList
             key='contributions'
-            title='Contributions'
+            title='Talks Proposals'
             type='contributions'
             currentEntryKey={this.state.currentEntryKey}
             entries={this.state.contributions}

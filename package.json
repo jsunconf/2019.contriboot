@@ -28,18 +28,12 @@
     "@types/react": "^16.8.8",
     "@types/react-dom": "^16.8.2",
     "@types/to-markdown": "^3.0.0",
-    "aliasify": "^2.1.0",
     "autoprefixer-stylus": "^0.14.0",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "concurrently": "^4.1.0",
-    "firebase": "^5.7.3",
     "http-server": "^0.11.1",
     "marked": "^0.6.0",
-    "react-markdown": "^4.0.6",
-    "react-medium-editor": "^1.8.1",
-    "react-spinner": "^0.2.7",
-    "reactfire": "^1.0.0",
     "stylus": "^0.54.5",
     "stylus-normalize": "^3.0.3",
     "to-markdown": "^3.1.1",
@@ -49,19 +43,14 @@
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   },
-  "aliasify": {
-    "aliases": {
-      "react": "preact-compat",
-      "react-dom": "preact-compat"
-    }
-  },
   "dependencies": {
+    "firebase": "^5.7.3",
+    "react-markdown": "^4.0.6",
+    "react-medium-editor": "^1.8.1",
+    "react-spinner": "^0.2.7",
+    "reactfire": "^1.0.0",
     "react": "16",
     "react-dom": "^16.8.4",
     "typescript": "^3.3.3333"
-  },
-  "X-removed-dependencies": {
-    "preact": "^8.4.2",
-    "preact-compat": "^3.18.4"
   }
 }

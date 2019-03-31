@@ -48,7 +48,7 @@ export default class AddEntriesForm extends React.Component<OwnProps, AddEntries
    */
   render(): JSX.Element {
     const submitText = 'Add ' +
-      (this.state.type === 'contributions' ? 'Contribution' : 'Interest');
+      (this.state.type === 'contributions' ? 'Talk Proposal' : 'Interest');
 
     return (
       <form className="submit-form"
@@ -67,7 +67,7 @@ export default class AddEntriesForm extends React.Component<OwnProps, AddEntries
               className=''
               checked={this.state.type === 'contributions'}
               value='contributions' />
-            <label className='button button--small' htmlFor='type--contributions'>Contribution</label>
+            <label className='button button--small' htmlFor='type--contributions'>Talk Proposal</label>
 
             <input type='radio'
               onChange={event => this.setState({type: event.target.value as ContribootEntryType})}
