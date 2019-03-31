@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import firebase, { VOTES_DB, INTERESTS_DB, CONTRIBUTIONS_DB } from './config';
+import firebase, { VOTES_DB, INTERESTS_DB, PROPOSALS_DB } from './config';
 
 import Login from './login';
 import Logout from './logout';
@@ -9,12 +9,13 @@ import EntriesList from './entries-list';
 import AddEntriesForm from './add-entries-form';
 import { ContribootEntry, ContribootUser, ContribootVote } from './types';
 import { isObject } from 'util';
+import { PROPOSALS, INTERESTS } from './static';
 
 type DataSnapshot = firebase.database.DataSnapshot;
 
 interface AppState {
   readonly shallScroll: boolean;
-  readonly contributions: ContribootEntry[];
+  readonly proposals: ContribootEntry[];
   readonly interests: ContribootEntry[];
   readonly votes: ContribootVote[];
   readonly user: null | ContribootUser;
@@ -27,7 +28,7 @@ type FirebaseDataValueCallback = (a: firebase.database.DataSnapshot | null, b?: 
 interface FirebaseCallbacks {
   votes: FirebaseDataValueCallback;
   interests: FirebaseDataValueCallback;
-  contributions: FirebaseDataValueCallback;
+  proposals: FirebaseDataValueCallback;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -38,7 +39,7 @@ class App extends React.Component<{}, AppState> {
     super(props);
     this.state = {
       shallScroll: true,
-      contributions: [],
+      proposals: [],
       interests: [],
       votes: [],
       user: null,
@@ -90,8 +91,8 @@ class App extends React.Component<{}, AppState> {
       return items;
     };
 
-    this.firebaseCallbacks.contributions = firebase.database().ref(CONTRIBUTIONS_DB).on('value', (snap: DataSnapshot) => {
-      this.setState({ contributions: getEntries(snap) });
+    this.firebaseCallbacks.proposals = firebase.database().ref(PROPOSALS_DB).on('value', (snap: DataSnapshot) => {
+      this.setState({ proposals: getEntries(snap) });
     });
 
     this.firebaseCallbacks.interests = firebase.database().ref(INTERESTS_DB).on('value', (snap: DataSnapshot) => {
@@ -122,15 +123,15 @@ class App extends React.Component<{}, AppState> {
   componentDidUpdate() {
     const {
       interests,
-      contributions,
+      proposals,
       currentEntryKey,
       shallScroll
     } = this.state;
 
     const entriesCount = document.querySelectorAll('.entry').length;
-    const didRender = contributions.length + interests.length === entriesCount;
+    const didRender = proposals.length + interests.length === entriesCount;
 
-    if (didRender && shallScroll && (contributions.length || interests.length)) {
+    if (didRender && shallScroll && (proposals.length || interests.length)) {
       const currentElement = document.querySelector(
         `[data-key='${currentEntryKey}']`);
 
@@ -148,7 +149,7 @@ class App extends React.Component<{}, AppState> {
   componentWillUnmount() {
     window.removeEventListener('hashchange', this.checkHash, false);
 
-    firebase.database().ref(CONTRIBUTIONS_DB).off('value', this.firebaseCallbacks.contributions);
+    firebase.database().ref(PROPOSALS_DB).off('value', this.firebaseCallbacks.proposals);
     firebase.database().ref(INTERESTS_DB).off('value', this.firebaseCallbacks.interests);
     firebase.database().ref(VOTES_DB).off('value', this.firebaseCallbacks.votes);
   }
@@ -237,22 +238,22 @@ class App extends React.Component<{}, AppState> {
       <div className='contriboot'>
         <div className='entries-container'>
           <EntriesList
-            key='contributions'
+            key={PROPOSALS}
             title='Talks Proposals'
-            type='contributions'
+            type={PROPOSALS}
             currentEntryKey={this.state.currentEntryKey}
-            entries={this.state.contributions}
+            entries={this.state.proposals}
             votes={this.state.votes} />
           <EntriesList
-            key='interests'
+            key={INTERESTS}
             title='Interests'
-            type='interests'
+            type={INTERESTS}
             currentEntryKey={this.state.currentEntryKey}
             entries={this.state.interests}
             votes={this.state.votes} />
         </div>
 
-        <h2>Add contrib or interest</h2>
+        <h2>Add proposal or interest</h2>
 
         {
           isLoggedin

@@ -13,6 +13,7 @@ interface OwnProps {
   votes: any[];
   type: ContribootEntryType;
 }
+
 /**
  * Renders a list of entries
  */
@@ -81,9 +82,9 @@ export default class EntriesList extends React.Component<OwnProps> {
           </a>
 
           {this.renderVoting(key, votes, voted)}
-        
+
         </div>
-        
+
         <div className='entry__description'>
           <ReactMarkdown source={description} />
         </div>

@@ -3,6 +3,7 @@ import toMarkdown from 'to-markdown';
 import Editor from 'react-medium-editor';
 import React from 'react';
 import { ContribootEntry, ContribootEntryType } from './types';
+import { isProposal, PROPOSALS, isInterest, INTERESTS } from './static';
 
 type AddEntriesFormState = ContribootEntry;
 
@@ -11,7 +12,7 @@ type OwnProps = {
 };
 
 const initialState: AddEntriesFormState = {
-  type: 'contributions',
+  type: PROPOSALS,
   title: '',
   description: ''
 }
@@ -48,7 +49,7 @@ export default class AddEntriesForm extends React.Component<OwnProps, AddEntries
    */
   render(): JSX.Element {
     const submitText = 'Add ' +
-      (this.state.type === 'contributions' ? 'Talk Proposal' : 'Interest');
+      (isProposal(this.state.type) ? 'Talk Proposal' : 'Interest');
 
     return (
       <form className="submit-form"
@@ -62,21 +63,21 @@ export default class AddEntriesForm extends React.Component<OwnProps, AddEntries
           <fieldset className="submit-form__type-selection">
             <input type='radio'
               onChange={event => this.setState({type: event.target.value as ContribootEntryType})}
-              id='type--contributions'
+              id={PROPOSALS}
               name='type'
               className=''
-              checked={this.state.type === 'contributions'}
-              value='contributions' />
-            <label className='button button--small' htmlFor='type--contributions'>Talk Proposal</label>
+              checked={isProposal(this.state.type)}
+              value={PROPOSALS} />
+            <label className='button button--small' htmlFor={PROPOSALS}>Talk Proposal</label>
 
             <input type='radio'
               onChange={event => this.setState({type: event.target.value as ContribootEntryType})}
-              id='type--interests'
+              id={INTERESTS}
               name='type'
               className=''
-              checked={this.state.type === 'interests'}
-              value='interests' />
-            <label className='button button--small' htmlFor='type--interests'>Interest</label>
+              checked={isInterest(this.state.type)}
+              value={INTERESTS} />
+            <label className='button button--small' htmlFor={INTERESTS}>Interest</label>
 
           </fieldset>
 

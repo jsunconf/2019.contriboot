@@ -11,5 +11,5 @@ visit `http://localhost:8080`
 ```
 yarn build
 
-cp build/static/jsunconf.contriboot.* ../2019.jsunconf.eu/content/scripts
+cp build/static/jsunconf.contriboot.* ../2019.jsunconf.eu/theme/scripts/modules/contriboot
 ```
